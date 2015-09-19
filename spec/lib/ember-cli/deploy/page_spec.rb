@@ -18,10 +18,10 @@ describe EmberCLI::Deploy::Page do
       page = build_page("<html><head><title></title></head></html>")
 
       page.append_to_head("<meta></meta>")
-      page.append_to_head("<script></script>")
+      page.append_to_head("<link></link>")
 
       expect(page.build).to eq(
-        "<html><head><title></title><meta></meta><script></script></head></html>"
+        "<html><head><title></title><meta></meta><link></link></head></html>"
       )
     end
   end
