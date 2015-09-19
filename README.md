@@ -40,7 +40,7 @@ To integrate with `ember-cli-deploy`'s ["Lightning Fast Deploys"][lightning]
 in your controller:
 
 ```ruby
-require "ember-cli/deploy"
+require "ember-cli/deploy/redis"
 
 class ApplicationController < ActionController::Base
   def index
@@ -62,7 +62,7 @@ will replace the call to the Redis instance. This allows integration with the
 normal `ember-cli-rails` workflow:
 
 ```ruby
-require "ember-cli/deploy"
+require "ember-cli/deploy/redis"
 
 class ApplicationController < ActionController::Base
   def index
