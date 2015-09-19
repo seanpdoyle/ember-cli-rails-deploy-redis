@@ -44,11 +44,11 @@ module EmberCLI
       end
 
       def head_position
-        html.index(">", html.index("<head")) + 1
+        html.index("</head")
       end
 
       def body_position
-        html.index(">", html.index("<body")) + 1
+        html.index("</body")
       end
     end
   end

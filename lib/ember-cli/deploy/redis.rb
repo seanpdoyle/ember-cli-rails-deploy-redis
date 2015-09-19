@@ -5,7 +5,8 @@ require "redis"
 module EmberCLI
   module Deploy
     class Redis
-      def initialize(namespace:, index_html: nil)
+      def initialize(namespace:, index_html: nil, redis_client: build_client)
+        @redis_client = redis_client
         @namespace = namespace
         @index_html = index_html
         @body_markup = []
@@ -40,10 +41,10 @@ module EmberCLI
 
       private
 
-      attr_reader :body_markup, :head_markup, :namespace
+      attr_reader :body_markup, :head_markup, :namespace, :redis_client
 
       def index_html
-        @index_html ||= redis.get(deploy_key).presence
+        @index_html ||= redis_client.get(deploy_key).presence
       end
 
       def current_key
@@ -51,10 +52,10 @@ module EmberCLI
       end
 
       def deploy_key
-        redis.get(current_key).presence || deployment_not_activated!
+        redis_client.get(current_key).presence || deployment_not_activated!
       end
 
-      def redis
+      def build_client
         ::Redis.new(url: ENV.fetch("REDIS_URL"))
       end
 

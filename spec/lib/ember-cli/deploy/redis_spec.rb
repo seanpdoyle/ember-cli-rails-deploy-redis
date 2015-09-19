@@ -4,25 +4,30 @@ require "ember-cli/deploy/redis"
 describe EmberCLI::Deploy::Redis do
   describe "#append_to_head" do
     it "injects the string into the <head> tag" do
-      provided_html = "<html><head></head></html>"
+      provided_html = "<html><head><title></title></head></html>"
       ember_cli_deploy = build_ember_cli_deploy(index_html: provided_html)
 
       ember_cli_deploy.append_to_head("<script></script>")
       index_html = ember_cli_deploy.html
 
-      expect(index_html).to eq("<html><head><script></script></head></html>")
+      expect(index_html).to eq(
+        "<html><head><title></title><script></script></head></html>"
+      )
     end
   end
 
   describe "#append_to_body" do
     it "injects the string into the <body> tag" do
-      provided_html = "<html><body></body></html>"
+      provided_html = "<html><body><br/></body></html>"
       ember_cli_deploy = build_ember_cli_deploy(index_html: provided_html)
 
       ember_cli_deploy.append_to_body("<script></script>")
+      ember_cli_deploy.append_to_body("<meta></meta>")
       index_html = ember_cli_deploy.html
 
-      expect(index_html).to eq("<html><body><script></script></body></html>")
+      expect(index_html).to eq(
+        "<html><body><br/><script></script><meta></meta></body></html>"
+      )
     end
   end
 
