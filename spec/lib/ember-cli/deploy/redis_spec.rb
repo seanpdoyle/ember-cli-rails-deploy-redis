@@ -56,12 +56,12 @@ describe EmberCLI::Deploy::Redis do
 
     context "when the current index is missing" do
       it "raises a helpful exception" do
-        deploy_key = "#{namespace}:abc123"
+        deploy_key = "abc123"
         stub_index_html(html: nil, deploy_key: deploy_key)
         ember_cli_deploy = build_ember_cli_deploy
 
         expect { ember_cli_deploy.html }.to raise_error(
-          /HTML for #{deploy_key} is missing/
+          /HTML for #{namespace}:#{deploy_key} is missing/
         )
       end
     end
@@ -98,9 +98,9 @@ describe EmberCLI::Deploy::Redis do
     redis.set(current_key, deploy_key)
   end
 
-  def stub_index_html(deploy_key: "#{namespace}:123", html:)
+  def stub_index_html(deploy_key: "123", html:)
     stub_current_key(deploy_key)
-    redis.set(deploy_key, html)
+    redis.set("#{namespace}:#{deploy_key}", html)
   end
 
   def redis

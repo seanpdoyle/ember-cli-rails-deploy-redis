@@ -52,7 +52,8 @@ module EmberCLI
       end
 
       def deploy_key
-        redis_client.get(current_key).presence || deployment_not_activated!
+        key = redis_client.get(current_key).presence || deployment_not_activated!
+        "#{namespace}:#{key}"
       end
 
       def build_client
