@@ -5,7 +5,7 @@ require "ember-cli/deploy/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "ember-cli-rails-deploy-redis"
-  spec.version       = EmberCLI::Rails::Deploy::VERSION
+  spec.version       = EmberCLI::Deploy::VERSION
   spec.authors       = ["Sean Doyle"]
   spec.email         = ["sean.p.doyle24@gmail.com"]
 
