@@ -1,4 +1,4 @@
-module EmberCLI
+module EmberCli
   module Deploy
     class Page
       def initialize(html:)

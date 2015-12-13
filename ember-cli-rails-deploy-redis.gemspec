@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "ember-cli/deploy/version"
+require "ember_cli/deploy/redis/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "ember-cli-rails-deploy-redis"
-  spec.version       = EmberCLI::Deploy::VERSION
+  spec.version       = EmberCli::Deploy::Redis::VERSION
   spec.authors       = ["Sean Doyle"]
   spec.email         = ["sean.p.doyle24@gmail.com"]
 

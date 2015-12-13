@@ -1,7 +1,7 @@
 require "spec_helper"
-require "ember-cli/deploy/redis"
+require "ember_cli/deploy/redis"
 
-describe EmberCLI::Deploy::Redis do
+describe EmberCli::Deploy::Redis do
   describe "#append_to_head" do
     it "injects the string into the <head> tag" do
       provided_html = "<html><head><title></title></head></html>"
@@ -85,7 +85,7 @@ describe EmberCLI::Deploy::Redis do
   end
 
   def build_ember_cli_deploy(index_html: nil)
-    EmberCLI::Deploy::Redis.new(namespace: namespace, index_html: index_html)
+    EmberCli::Deploy::Redis.new(namespace: namespace, index_html: index_html)
   end
 
   def namespace

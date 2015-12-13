@@ -1,7 +1,7 @@
 require "spec_helper"
-require "ember-cli/deploy/page"
+require "ember_cli/deploy/page"
 
-describe EmberCLI::Deploy::Page do
+describe EmberCli::Deploy::Page do
   describe "#build" do
     it "appends to the body" do
       page = build_page("<html><body><h1></h1></body></html>")
@@ -28,5 +28,5 @@ describe EmberCLI::Deploy::Page do
 end
 
 def build_page(html)
-  EmberCLI::Deploy::Page.new(html: html)
+  EmberCli::Deploy::Page.new(html: html)
 end

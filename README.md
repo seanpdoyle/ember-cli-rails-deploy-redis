@@ -1,4 +1,4 @@
-# EmberCLI::Rails - Deploy Redis
+# EmberCli::Deploy::Redis
 
 [EmberCLI Rails] is an integration story between (surprise suprise) EmberCLI and
 Rails 3.1 and up.
@@ -36,37 +36,37 @@ This project attempts to streamline the process of pushing and serving
 EmberCLI-built static assets.
 
 To integrate with `ember-cli-deploy`'s ["Lightning Fast Deploys"][lightning]
-(using the Redis adapter), instantiate an `EmberCLI::Deploy::Redis`
+(using the Redis adapter), instantiate an `EmberCli::Deploy::Redis`
 in your controller:
 
 ```ruby
-require "ember-cli/deploy/redis"
+require "ember_cli/deploy/redis"
 
 class ApplicationController < ActionController::Base
   def index
-    @deploy = EmberCLI::Deploy::Redis.new(namespace: "frontend")
+    @deploy = EmberCli::Deploy::Redis.new(namespace: "frontend")
 
     render text: @deploy.html, layout: false
   end
 end
 ```
 
-`EmberCLI::Deploy::Redis` takes a `namespace` (the name of your app declared in
+`EmberCli::Deploy::Redis` takes a `namespace` (the name of your app declared in
 your initializer) and handles all interaction with the Redis instance.
 
 This is great for `staging` and `production` deploys, but introduces an extra
 step in the feedback loop during development.
 
-Luckily, `EmberCLI::Deploy::Redis` also accepts an `index_html` override, which
+Luckily, `EmberCli::Deploy::Redis` also accepts an `index_html` override, which
 will replace the call to the Redis instance. This allows integration with the
 normal `ember-cli-rails` workflow:
 
 ```ruby
-require "ember-cli/deploy/redis"
+require "ember_cli/deploy/redis"
 
 class ApplicationController < ActionController::Base
   def index
-    @deploy = EmberCLI::Deploy::Redis.new(
+    @deploy = EmberCli::Deploy::Redis.new(
       namespace: "frontend",
       index_html: index_html,
     )
@@ -94,11 +94,11 @@ analytics tags:
 
 
 ```ruby
-require "ember-cli/deploy"
+require "ember_cli/deploy/redis"
 
 class ApplicationController < ActionController::Base
   def index
-    @deploy = EmberCLI::Deploy::Redis.new(
+    @deploy = EmberCli::Deploy::Redis.new(
       namespace: "frontend",
       index_html: index_html,
     )

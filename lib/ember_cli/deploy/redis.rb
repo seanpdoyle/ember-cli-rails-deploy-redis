@@ -1,8 +1,8 @@
 require "active_support/core_ext/object/blank"
-require "ember-cli/deploy/page"
+require "ember_cli/deploy/page"
 require "redis"
 
-module EmberCLI
+module EmberCli
   module Deploy
     class Redis
       def initialize(namespace:, index_html: nil, redis_client: build_client)
