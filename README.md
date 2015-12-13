@@ -1,119 +1,126 @@
 # EmberCli::Deploy::Redis
 
-[EmberCLI Rails] is an integration story between (surprise suprise) EmberCLI and
-Rails 3.1 and up.
+[EmberCLI Rails] is a tool to unify your EmberCLI and Rails Workflows.
 
 [ember-cli-deploy] is a simple, flexible deployment for your Ember CLI app.
 
-[ember-deploy-redis] is the redis-adapter implementation to use Redis with ember-deploy.
+[ember-cli-deploy-redis] is an `ember-cli-deploy` plugin to upload `index.html`
+to a Redis store.
 
-`ember-cli-rails-deploy-redis` wires up all three.
+`ember-cli-rails-deploy-redis` is a gem that integrates all three.
 
-[EmberCLI Rails]: https://github.com/rwz/ember-cli-rails
-[ember-cli-deploy]: https://github.com/ember-cli/ember-cli-deploy
-[ember-deploy-redis]: https://github.com/LevelbossMike/ember-deploy-redis
+This project streamlines the process of pushing and serving EmberCLI-built
+assets from Rails.
 
-## Installation
+[EmberCLI Rails]: https://github.com/thoughtbot/ember-cli-rails
+[ember-cli-deploy]: http://ember-cli.com/ember-cli-deploy/
+[ember-cli-deploy-redis]: https://github.com/ember-cli-deploy/ember-cli-deploy-redis
+
+## Install
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ember-cli-rails-deploy-redis'
+group :production do
+  gem "ember-cli-rails-deploy-redis"
+end
 ```
 
 And then execute:
 
 ```bash
-$ bundle
+$ bundle install
 ```
 
-## Usage
+## Setup
 
-The EmberCLI community recently unified the various deployment techniques into a
-single, core-team supported project: [ember-cli-deploy][ember-cli-deploy].
+First, [configure your application to integrate with
+`ember-cli-rails`][ember-cli-rails-setup].
 
-This project attempts to streamline the process of pushing and serving
-EmberCLI-built static assets.
+Then, to integrate with `ember-cli-deploy`'s ["Lightning Fast Deploys"][lightning]
+(using the Redis adapter) in `production`, instantiate configure EmberCLI-Rails
+to deploy with the `EmberCli::Deploy::Redis` strategy:
 
-To integrate with `ember-cli-deploy`'s ["Lightning Fast Deploys"][lightning]
-(using the Redis adapter), instantiate an `EmberCli::Deploy::Redis`
-in your controller:
+[ember-cli-rails-setup]: https://github.com/thoughtbot/ember-cli-rails#setup
 
 ```ruby
-require "ember_cli/deploy/redis"
+# config/initializers/ember.rb
 
-class ApplicationController < ActionController::Base
-  def index
-    @deploy = EmberCli::Deploy::Redis.new(namespace: "frontend")
-
-    render text: @deploy.html, layout: false
-  end
+EmberCli.configure do |config|
+  config.app :frontend, deploy: { production: EmberCli::Deploy::Redis }
 end
 ```
 
-`EmberCli::Deploy::Redis` takes a `namespace` (the name of your app declared in
-your initializer) and handles all interaction with the Redis instance.
+Finally, set `ENV["REDIS_URL"]` to the URL [ember-cli-deploy-redis references][redis-config].
 
-This is great for `staging` and `production` deploys, but introduces an extra
-step in the feedback loop during development.
+If you're deploying from Redis in `development` or `test`, disable
+EmberCLI-Rails' build step by setting `ENV["SKIP_EMBER"] = true`.
 
-Luckily, `EmberCli::Deploy::Redis` also accepts an `index_html` override, which
-will replace the call to the Redis instance. This allows integration with the
-normal `ember-cli-rails` workflow:
+[redis-config]: https://github.com/ember-cli-deploy/ember-cli-deploy-redis#configuration-options
 
-```ruby
-require "ember_cli/deploy/redis"
+## Deploy
 
-class ApplicationController < ActionController::Base
-  def index
-    @deploy = EmberCli::Deploy::Redis.new(
-      namespace: "frontend",
-      index_html: index_html,
+Deploy your application through [ember-cli-deploy-redis][deploy].
+
+[deploy]: https://github.com/ember-cli-deploy/ember-cli-deploy-redis#quick-start
+
+## Use without `ember-cli-rails`
+
+Although this gem was designed to integrate with `ember-cli-rails`, there isn't
+a direct dependency on it.
+
+Similar behavior can be achieved by using a gem like [`html_page`][html_page]:
+
+[html_page]: https://github.com/seanpdoyle/html_page
+
+```rb
+require "html_page"
+
+class EmberHelper
+  def render_html(html)
+    capturer = HtmlPage::Capture.new(self, &block)
+
+    head, body = capturer.capture
+
+    renderer = HtmlPage::Renderer.new(
+      content: html,
+      head: head,
+      body: body,
     )
 
-    render text: @deploy.html, layout: false
+    render inline: renderer.render
+  end
+end
+
+class EmberController
+  def index
+    redis = EmberCli::Deploy::Redis.new(ember_app)
+
+    @html_from_redis = redis.index_html
+
+    render layout: false
   end
 
   private
 
-  def index_html
-    if serve_with_ember_cli_rails?
-      render_to_string(:index)
-    end
-  end
-
-  def serve_with_ember_cli_rails?
-    ! %w[production staging].include?(Rails.env)
+  def ember_app
+    OpenStruct.new(name: "my-ember-app")
   end
 end
 ```
 
-Additionally, having access to the outbound HTML beforehand also enables
-controllers to inject additional markup, such as metadata, CSRF tokens, or
-analytics tags:
+```erb
+<!-- app/views/ember/index.html.erb -->
+<%= render_html @html_from_redis do |head, body| %>
+  <% head.append do %>
+    <title>Appended to the `head` element</title>
+  <% end %>
 
-
-```ruby
-require "ember_cli/deploy/redis"
-
-class ApplicationController < ActionController::Base
-  def index
-    @deploy = EmberCli::Deploy::Redis.new(
-      namespace: "frontend",
-      index_html: index_html,
-    )
-
-    @deploy.append_to_head(render_to_string(partial: "my_csrf_and_metadata")
-    @deploy.append_to_body(render_to_string(partial: "my_analytics")
-
-    render text: @deploy.html, layout: false
-  end
-  # ...
-end
+  <% body.append do %>
+    <p>Appended to the `body` element</p>
+  <% end %>
+<% end %>
 ```
-
-[ember-cli-deploy]: https://github.com/ember-cli/ember-cli-deploy
-[lightning]: https://github.com/ember-cli/ember-cli-deploy#lightning-approach-workflow
 
 ## Development
 

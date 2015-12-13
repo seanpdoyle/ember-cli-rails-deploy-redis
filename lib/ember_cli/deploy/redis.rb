@@ -1,50 +1,27 @@
 require "active_support/core_ext/object/blank"
-require "ember_cli/deploy/page"
 require "redis"
 
 module EmberCli
   module Deploy
     class Redis
-      def initialize(namespace:, index_html: nil, redis_client: build_client)
-        @redis_client = redis_client
-        @namespace = namespace
-        @index_html = index_html
-        @body_markup = []
-        @head_markup = []
+      def initialize(app)
+        @app = app
       end
 
-      def append_to_body(markup)
-        body_markup << markup
-      end
-
-      def append_to_head(markup)
-        head_markup << markup
-      end
-
-      def html
-        if index_html.present?
-          page = Page.new(html: index_html)
-
-          body_markup.each do |markup|
-            page.append_to_body(markup)
-          end
-
-          head_markup.each do |markup|
-            page.append_to_head(markup)
-          end
-
-          page.build
-        else
-          index_html_missing!
-        end
+      def index_html
+        redis_client.get(deploy_key).presence || index_html_missing!
       end
 
       private
 
-      attr_reader :body_markup, :head_markup, :namespace, :redis_client
+      attr_reader :app
 
-      def index_html
-        @index_html ||= redis_client.get(deploy_key).presence
+      def redis_client
+        @redis_client ||= ::Redis.new(url: ENV.fetch("REDIS_URL"))
+      end
+
+      def namespace
+        app.name
       end
 
       def current_key
@@ -52,32 +29,26 @@ module EmberCli
       end
 
       def deploy_key
-        key = redis_client.get(current_key).presence || deployment_not_activated!
+        key = redis_client.get(current_key).presence ||
+              deployment_not_activated!
+
         "#{namespace}:#{key}"
       end
 
-      def build_client
-        ::Redis.new(url: ENV.fetch("REDIS_URL"))
-      end
-
       def index_html_missing!
-        message = <<-FAIL
+        raise KeyError.new <<-FAIL
         HTML for #{deploy_key} is missing.
 
         Did you forget to call `ember deploy`?
         FAIL
-
-        raise KeyError, message
       end
 
       def deployment_not_activated!
-        message = <<-FAIL
+        raise KeyError.new <<-FAIL
         #{current_key} is empty.
 
         Did you forget to call `ember deploy:activate`?
         FAIL
-
-        raise KeyError, message
       end
     end
   end
