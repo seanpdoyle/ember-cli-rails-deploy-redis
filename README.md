@@ -21,9 +21,7 @@ assets from Rails.
 Add this line to your application's Gemfile:
 
 ```ruby
-group :production do
-  gem "ember-cli-rails-deploy-redis"
-end
+gem "ember-cli-rails-deploy-redis"
 ```
 
 And then execute:
