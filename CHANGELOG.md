@@ -1,6 +1,9 @@
 master
 ------
 
+0.1.1
+-----
+
 * Introduce `ember-cli-rails-deploy-redis` for the sake of requiring from the
   `gem` invocation in the `Gemfile`.
 
