@@ -1,6 +1,8 @@
 master
 ------
 
+* Add `#mountable?` and `#to_rack` to deploy API.
+
 0.1.1
 -----
 

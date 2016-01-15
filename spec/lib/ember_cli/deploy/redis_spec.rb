@@ -2,6 +2,24 @@ require "spec_helper"
 require "ember_cli/deploy/redis"
 
 describe EmberCli::Deploy::Redis do
+  describe "#mountable?" do
+    it "returns false" do
+      ember_cli_deploy = build_ember_cli_deploy
+
+      mountable = ember_cli_deploy.mountable?
+
+      expect(mountable).to be false
+    end
+  end
+
+  describe "#to_rack" do
+    it "raises a NotImplementedError" do
+      ember_cli_deploy = build_ember_cli_deploy
+
+      expect { ember_cli_deploy.to_rack }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#index_html" do
     context "when the keys are present" do
       it "retrieves the HTML from Redis" do

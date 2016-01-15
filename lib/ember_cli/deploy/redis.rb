@@ -12,6 +12,14 @@ module EmberCli
         redis_client.get(deploy_key).presence || index_html_missing!
       end
 
+      def mountable?
+        false
+      end
+
+      def to_rack
+        raise NotImplementedError
+      end
+
       private
 
       attr_reader :app
