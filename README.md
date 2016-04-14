@@ -13,7 +13,7 @@ This project streamlines the process of pushing and serving EmberCLI-built
 assets from Rails.
 
 [EmberCLI Rails]: https://github.com/thoughtbot/ember-cli-rails
-[ember-cli-deploy]: http://ember-cli.com/ember-cli-deploy/
+[ember-cli-deploy]: http://www.ember-cli-deploy.com/
 [ember-cli-deploy-redis]: https://github.com/ember-cli-deploy/ember-cli-deploy-redis
 
 ## Install
